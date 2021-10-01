@@ -33,7 +33,7 @@ module.exports = {
                             _id: user._id,
                             name: user.name,
                             email: user.email,
-                            phone: user.phone
+                            phone: user.phone,
                         }, 'SECRET', {expiresIn: '2h'});
 
                         return res.status(200).json({
@@ -51,6 +51,9 @@ module.exports = {
     },
     register(req, res){
         let {name, email, password, confirmPassword, phone, userType } = req.body;
+        if(!userType){
+            userType = "admin"
+        }
         const validate = registerValidator({
             name,
             email,
@@ -106,9 +109,36 @@ module.exports = {
                     return res.status(500).json({
                         error,
                         message: 'Server Error'
-                    })
+                    });
                 });
         }
+    },
+    profile(req, res){
+        const uid = req.params.uid;
+        return User.findOne({_id:uid})
+                    .then(user=>{
+                        if(!user){
+                            return res.status(400).json({
+                                message:"user not found"
+                            })
+                        }
+                        const {name, email, phone, members} = user;
+                        // return res.status(201).json(user);
+                        return res.status(201).json({name,email,phone, members});
+                    })
+                    .catch(err=>{
+                        return res.status(500).json({
+                            message:"Server error"
+                        })
+                    })
+        res.json({
+            message: req.params.uid
+        })
+    },
+    allUsers(req, res){
+        return res.status(200).json({
+            message:'all users'
+        })
     }
 
 }
