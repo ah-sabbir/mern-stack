@@ -1,27 +1,25 @@
-const router = require('express').Router()
+const router = require('express').Router();
+const {
+    create,
+    getAllMembers,
+    getSingleMemeber,
+    updateMember,
+    deleteMember
+} = require('../controller/memberController');
 
-router.get('/', (req, res)=>{
 
-});
+router.get('/:authId', getAllMembers);
 
-router.post('/', (req, res)=>{
-
-});
+router.post('/', create);
 
 // get member
-router.get('/:uid', (req, res)=>{
-
-});
+router.get('member/:uid', getSingleMemeber);
 
 // update memeber 
-router.put('/:uid', (req, res)=>{
-
-});
+router.put('/:uid', updateMember);
 
 // delete memeber
-router.delete('/:uid', (req, res)=>{
-
-});
+router.delete('/:uid', deleteMember);
 
 
 

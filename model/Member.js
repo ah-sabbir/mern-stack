@@ -19,11 +19,9 @@ const memberSchema = new Schema({
         required: true,
         trim: true
     },
-    user:{
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'user'
-        }]
+    author:{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, { timestamps: true } );
 

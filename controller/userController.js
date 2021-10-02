@@ -113,9 +113,9 @@ module.exports = {
                 });
         }
     },
-    profile(req, res){
+    async profile(req, res){
         const uid = req.params.uid;
-        return User.findOne({_id:uid})
+        return await User.findOne({_id:uid})
                     .then(user=>{
                         if(!user){
                             return res.status(400).json({
