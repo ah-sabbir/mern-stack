@@ -131,14 +131,26 @@ module.exports = {
                             message:"Server error"
                         })
                     })
-        res.json({
-            message: req.params.uid
-        })
     },
-    allUsers(req, res){
-        return res.status(200).json({
-            message:'all users'
-        })
-    }
+    async updateUser(req, res){
+        try {
+            const user = await User.findById(req.params.uid);
+            Object.assign(user,req.body);
+            user.save();
+            res.status(201).send({ data:user });
+        } catch (error) {
+            res.status(404).send({ error: "User Not Found !"});
+        }
+    },
+    async deleteUser(req, res){
+        try {
+            const user = await User.findById(req.params.uid);
+            user.remove();
+            res.status(201).send({ data:true });
+        } catch (error) {
+            res.status(404).send({ error: "User Not Found !"});
+        }
+    },
+
 
 }
