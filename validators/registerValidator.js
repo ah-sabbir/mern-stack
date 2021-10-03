@@ -29,10 +29,6 @@ const validate = user =>{
         errors.phone = 'Please Provide Your Phone Number'
     }
 
-    if(!user.userType){
-        errors.userType = 'Please Provide User Type'
-    }
-
     return {
         errors,
         isValid: Object.keys(errors).length == 0

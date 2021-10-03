@@ -4,7 +4,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const userRouter = require('./route/userRoute');
-const memberRoute = require('./route/memberRoute');
 
 
 const app = express();
@@ -15,7 +14,6 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 app.use('/api/users', userRouter);
-app.use('/api/members', memberRoute);
 
 
 

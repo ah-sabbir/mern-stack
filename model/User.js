@@ -20,13 +20,13 @@ const userSchema = new Schema({
         required: true,
         trim: true
     },
-    userType:{
+    role:{
         type: String,
     },
     members:{
         type: [{
             type: Schema.Types.ObjectId,
-            ref: 'Member'
+            ref: 'User'
         }]
     }
 });
