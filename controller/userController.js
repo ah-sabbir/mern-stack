@@ -34,8 +34,7 @@ module.exports = {
                             name: user.name,
                             email: user.email,
                             phone: user.phone,
-                            role: user.role,
-                            members: user.members
+                            role: user.role
                         }, 'SECRET', {expiresIn: '2h'});
 
                         return res.status(200).json({
@@ -53,11 +52,6 @@ module.exports = {
     },
     register(req, res){
         let { name, email, password, confirmPassword, phone } = req.body;
-        let role = 'admin';
-        let decode = {}
-        if(req.headers.authorization){
-            decode = jwtDecode(req.headers.authorization)
-        }
         const validate = registerValidator({
             name,
             email,
@@ -77,33 +71,32 @@ module.exports = {
                             message: "User already exist."
                         });
                     }else{
-                        if(decode.role === 'admin'){
-                            // console.log(decode);
-                            role = 'member';
-                        }
                         bcrypt.hash(password, 11, (err, hash)=>{
                             if(err){
                                 return res.status(500).json({
                                     message: "Server Error Occurred"
                                 })
                             }
-    
+
+                            let decode = {}
+                            let isAdmin = true
+                            let adminRef = null
+                            if(req.headers.authorization){
+                                decode = jwtDecode(req.headers.authorization)
+                                isAdmin = false
+                                adminRef = decode._id
+                            }
+
                             let user = new User({
                                 name,
                                 email,
                                 password: hash,
                                 phone,
-                                role: role,
+                                isAdmin: isAdmin,
+                                adminRef: adminRef
                             });
                             user.save()
                                 .then(user=>{
-                                    if(decode.members){
-                                        User.find({_id:decode._id}, function(err, docs){
-                                            let updatedUser = { ...docs[0]._doc }
-                                            updatedUser.members.unshift(user._id)
-                                            User.findByIdAndUpdate(updatedUser._id, {members: updatedUser.members})
-                                        });
-                                    }
                                     return res.status(201).json({
                                         message: 'Created successfully',
                                         user
@@ -135,11 +128,31 @@ module.exports = {
                                 message:"user not found"
                             })
                         }
-                        const {name, email, phone, members} = user;
-                        // return res.status(201).json(user);
-                        return res.status(201).json({name,email,phone, members});
-                    })
+                        if(user.isAdmin){
+                            User.find({adminRef: user._id},function(err,users){
+                                if(err){
+                                    console.log(err)
+                                    res.send('server error')
+                                }
+                                user._doc.users = [...users]
+                                const response = user._doc
+
+                                res.status(200).json(response)
+                            })
+                        }else{
+                            const {_id, name,email,phone} = user;
+                            return res.status(200).json({_id, name,email,phone})
+                        }
+                                // .then(users=>console.log(users)
+                            // const {name, email, phone} = user;
+                        })
+                        
+                    //     console.log(users);
+                    //     // return res.status(201).json(user);
+                    //     return res.status(201).json({name,email,phone});
+                    // })
                     .catch(err=>{
+                        console.log(err)
                         return res.status(500).json({
                             message:"Server error"
                         })

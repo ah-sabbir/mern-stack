@@ -20,14 +20,13 @@ const userSchema = new Schema({
         required: true,
         trim: true
     },
-    role:{
-        type: String,
+    isAdmin:{
+        type: Boolean,
+        default: true
+
     },
-    members:{
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }]
+    adminRef:{
+            type: Schema.Types.ObjectId
     }
 });
 
