@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const userRouter = require('./route/userRoute');
-
+const taskRouter = require('./route/taskRoute');
 
 const app = express();
 app.use(morgan('dev'));
@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 app.use('/api/users', userRouter);
-
+app.use('/api/tasks/', taskRouter);
 
 
 

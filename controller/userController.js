@@ -34,6 +34,7 @@ module.exports = {
                             name: user.name,
                             email: user.email,
                             phone: user.phone,
+                            isAdmin:user.isAdmin,
                             role: user.role
                         }, 'SECRET', {expiresIn: '2h'});
 
@@ -123,34 +124,28 @@ module.exports = {
         const uid = req.params.uid;
         return await User.findOne({_id:uid})
                     .then(user=>{
-                        if(!user){
-                            return res.status(400).json({
-                                message:"user not found"
-                            })
-                        }
-                        if(user.isAdmin){
-                            User.find({adminRef: user._id},function(err,users){
-                                if(err){
-                                    console.log(err)
-                                    res.send('server error')
-                                }
-                                user._doc.users = [...users]
-                                const response = user._doc
+                            if(!user){
+                                return res.status(400).json({
+                                    message:"user not found"
+                                })
+                            }
+                            if(user.isAdmin){
+                                User.find({adminRef: user._id},function(err,users){
+                                    if(err){
+                                        console.log(err)
+                                        res.send('server error')
+                                    }
+                                    user._doc.users = [...users]
+                                    const response = user._doc
 
-                                res.status(200).json(response)
-                            })
-                        }else{
-                            const {_id, name,email,phone} = user;
-                            return res.status(200).json({_id, name,email,phone})
-                        }
-                                // .then(users=>console.log(users)
-                            // const {name, email, phone} = user;
-                        })
+                                    res.status(200).json(response)
+                                })
+                            }else{
+                                const {_id, name,email,phone} = user;
+                                return res.status(200).json({_id, name,email,phone})
+                            }
                         
-                    //     console.log(users);
-                    //     // return res.status(201).json(user);
-                    //     return res.status(201).json({name,email,phone});
-                    // })
+                        })
                     .catch(err=>{
                         console.log(err)
                         return res.status(500).json({
@@ -169,12 +164,15 @@ module.exports = {
         }
     },
     async deleteUser(req, res){
+        // console.log(req.params.uid)
+        // res.json({message:req.params.uid})
         try {
             const user = await User.findById(req.params.uid);
             user.remove();
-            res.status(201).send({ data:true });
+            return res.status(201).json({ message: 'deleted user'});
         } catch (error) {
-            res.status(404).send({ error: "User Not Found !"});
+            console.log(error)
+            return res.status(404).json({ error: "User Not Found !"});
         }
     },
 

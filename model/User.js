@@ -28,7 +28,7 @@ const userSchema = new Schema({
     adminRef:{
             type: Schema.Types.ObjectId
     }
-});
+}, {timestamps: true} );
 
 
 const User = mongoose.model('User', userSchema);
